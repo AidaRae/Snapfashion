@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SNAPFASHION — Curated Living</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Playfair Display', 'serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        cream: '#F7F3EE',
+                        bark: '#2C2218',
+                        clay: '#C4A882',
+                        sage: '#8A9E8C',
+                        rust: '#B5522A',
+                        sand: '#E8DDD0',
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.6s ease forwards',
+                        'fade-in': 'fadeIn 0.4s ease forwards',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: 0, transform: 'translateY(24px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        h1,
+        h2,
+        h3,
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Light mode */
+        .light body,
+        body {
+            background: #F7F3EE;
+            color: #2C2218;
+        }
+
+        /* Dark mode */
+        .dark body {
+            background: #1A1410;
+            color: #E8DDD0;
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-primary {
+            background: #2C2218;
+            color: #F7F3EE;
+            transition: background 0.25s, transform 0.2s;
+        }
+
+        .dark .btn-primary {
+            background: #E8DDD0;
+            color: #1A1410;
+        }
+
+        .btn-primary:hover {
+            background: #B5522A;
+            transform: scale(1.03);
+        }
+
+        .dark .btn-primary:hover {
+            background: #C4A882;
+        }
+
+        .tag {
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        /* Nav */
+        nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .light nav {
+            background: rgba(247, 243, 238, 0.85);
+            border-bottom: 1px solid #E8DDD0;
+        }
+
+        .dark nav {
+            background: rgba(26, 20, 16, 0.88);
+            border-bottom: 1px solid #2C2218;
+        }
+
+        /* Toggle */
+        .toggle-track {
+            width: 48px;
+            height: 26px;
+            border-radius: 999px;
+            transition: background 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .light .toggle-track {
+            background: #2C2218;
+        }
+
+        .dark .toggle-track {
+            background: #C4A882;
+        }
+
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #F7F3EE;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+
+        .dark .toggle-thumb {
+            transform: translateX(22px);
+            background: #1A1410;
+        }
+
+        /* Hero */
+        .hero-bg {
+            background: linear-gradient(135deg, #EDE6DB 0%, #D9CDBE 50%, #C4B8A8 100%);
+        }
+
+        .dark .hero-bg {
+            background: linear-gradient(135deg, #2C2218 0%, #1F1A14 50%, #141009 100%);
+        }
+
+        .product-img-wrap {
+            overflow: hidden;
+            border-radius: 12px;
+            aspect-ratio: 3/4;
+            background: #E8DDD0;
+        }
+
+        .dark .product-img-wrap {
+            background: #2C2218;
+        }
+
+        .product-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card-hover:hover .product-img-wrap img {
+            transform: scale(1.07);
+        }
+
+        /* Skeleton loader shimmer */
+        @keyframes shimmer {
+            0% {
+                background-position: -400px 0;
+            }
+
+            100% {
+                background-position: 400px 0;
+            }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #e8ddd0 25%, #f0e8df 50%, #e8ddd0 75%);
+            background-size: 800px 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .dark .shimmer {
+            background: linear-gradient(90deg, #2C2218 25%, #3a2f25 50%, #2C2218 75%);
+            background-size: 800px 100%;
+        }
+
+        .stagger-1 {
+            animation-delay: 0.05s;
+            opacity: 0;
+        }
+
+        .stagger-2 {
+            animation-delay: 0.15s;
+            opacity: 0;
+        }
+
+        .stagger-3 {
+            animation-delay: 0.25s;
+            opacity: 0;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.35s;
+            opacity: 0;
+        }
+
+        .stagger-5 {
+            animation-delay: 0.45s;
+            opacity: 0;
+        }
+
+        .stagger-6 {
+            animation-delay: 0.55s;
+            opacity: 0;
+        }
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .badge-new {
+            background: #2C2218;
+            color: #F7F3EE;
+        }
+
+        .dark .badge-new {
+            background: #E8DDD0;
+            color: #1A1410;
+        }
+
+        .badge-sale {
+            background: #B5522A;
+            color: #fff;
+        }
+
+        .rating {
+            color: #C4A882;
+        }
+
+        .filter-btn {
+            border: 1px solid #C4A882;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #2C2218;
+            color: #F7F3EE;
+            border-color: #2C2218;
+        }
+
+        .dark .filter-btn.active,
+        .dark .filter-btn:hover {
+            background: #E8DDD0;
+            color: #1A1410;
+            border-color: #E8DDD0;
+        }
+
+        .cart-count {
+            background: #B5522A;
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -6px;
+            right: -6px;
+        }
+
+        .section-line {
+            width: 48px;
+            height: 2px;
+            background: #C4A882;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-card {
+            border-left: 3px solid #C4A882;
+        }
+
+        footer {
+            border-top: 1px solid #E8DDD0;
+        }
+
+        .dark footer {
+            border-top: 1px solid #2C2218;
+        }
+
+        /* Notification toast */
+        #toast {
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+            pointer-events: none;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Search bar */
+        .search-input {
+            border: 1px solid #C4A882;
+            background: transparent;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #B5522A;
+            box-shadow: 0 0 0 3px rgba(181, 82, 42, 0.12);
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .overlay-wishlist {
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .card-hover:hover .overlay-wishlist {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 flex items-center justify-between">
+        <a href="#" class="font-display text-2xl font-bold tracking-tight">SNAPFASHION</a>
+
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="#collections" class="opacity-70 hover:opacity-100 transition-opacity">Shop</a>
+            <a href="#products" class="opacity-70 hover:opacity-100 transition-opacity">Men</a>
+            <a href="#testimonials" class="opacity-70 hover:opacity-100 transition-opacity">Women</a>
+            <a href="#" class="opacity-70 hover:opacity-100 transition-opacity">About Us</a>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- Search -->
+            <div class="hidden md:flex items-center">
+                <input type="text" placeholder="Search…"
+                    class="search-input text-sm px-4 py-1.5 rounded-full w-36 focus:w-48 transition-all duration-300 font-body"
+                    id="searchInput" />
+            </div>
+
+            <!-- Dark mode toggle -->
+            <div class="toggle-track" onclick="toggleDark()" title="Toggle dark mode">
+                <div class="toggle-thumb"></div>
+            </div>
+
+            <!-- Wishlist -->
+            <button class="relative p-1.5 opacity-70 hover:opacity-100 transition-opacity"
+                onclick="alert('Wishlist: ' + wishlist.length + ' items')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                    stroke-width="1.7" viewBox="0 0 24 24">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span id="wishlistCount" class="cart-count hidden">0</span>
+            </button>
+
+            <!-- Cart -->
+            <button class="relative p-1.5 opacity-70 hover:opacity-100 transition-opacity" onclick="toggleCart()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                    stroke-width="1.7" viewBox="0 0 24 24">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                <span id="cartCount" class="cart-count hidden">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero-bg min-h-screen flex items-center pt-20 px-6 md:px-12 overflow-hidden">
+        <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+            <div class="animate-fade-up">
+                <span class="tag opacity-60 mb-4 inline-block">New Season — SS 2026</span>
+                <h1 class="font-display text-5xl md:text-7xl leading-tight mb-6">
+                    Crafted for<br />
+                    <em>Those Who<br />Notice</em>
+                </h1>
+                <p class="max-w-md opacity-70 leading-relaxed mb-8 text-base">
+                    Thoughtfully curated pieces for the home and self — where material quality meets quiet restraint.
+                </p>
+                <div class="flex gap-4 flex-wrap">
+                    <a href="#products"
+                        class="btn-primary px-8 py-3.5 rounded-full text-sm font-medium font-body">Explore
+                        Collection</a>
+                    <a href="#collections"
+                        class="px-8 py-3.5 rounded-full text-sm font-medium border border-current opacity-60 hover:opacity-100 transition-opacity">Our
+                        Story</a>
+                </div>
+                <div class="mt-12 flex gap-8">
+                    <div>
+                        <div class="font-display text-3xl font-bold">4.9<span class="text-clay">★</span></div>
+                        <div class="text-xs opacity-50 mt-1">Avg Rating</div>
+                    </div>
+                    <div>
+                        <div class="font-display text-3xl font-bold">12K+</div>
+                        <div class="text-xs opacity-50 mt-1">Happy Clients</div>
+                    </div>
+                    <div>
+                        <div class="font-display text-3xl font-bold">200+</div>
+                        <div class="text-xs opacity-50 mt-1">Products</div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative flex justify-center">
+                <div class="relative w-72 md:w-96 animate-fade-in" style="animation-delay:0.3s;opacity:0">
+                    <div style="background:#D9CDBE;border-radius:60% 40% 55% 45% / 50% 60% 40% 50%;aspect-ratio:1/1;width:100%;overflow:hidden;"
+                        class="dark:opacity-80">
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80"
+                            alt="Hero product" style="width:100%;height:100%;object-fit:cover;" />
+                    </div>
+                    <!-- Floating badge -->
+                    <div
+                        class="absolute -bottom-4 -left-8 bg-white dark:bg-bark shadow-xl rounded-2xl px-5 py-3 flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-sand dark:bg-gray-700 flex items-center justify-center text-lg">
+                            🏺</div>
+                        <div>
+                            <div class="text-xs font-medium">Artisan Made</div>
+                            <div class="text-xs opacity-50">Ethically Sourced</div>
+                        </div>
+                    </div>
+                    <div
+                        class="absolute -top-4 -right-6 bg-clay text-bark rounded-2xl px-4 py-2 text-xs font-medium shadow-lg">
+                        Free Shipping ✦</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY STRIP -->
+    <section id="collections" class="py-16 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="section-line"></div>
+            <h2 class="font-display text-3xl mb-10">Shop by Category</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="group cursor-pointer relative overflow-hidden rounded-2xl aspect-square card-hover"
+                    onclick="filterProducts('Home')">
+                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80" alt="Home"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-bark/70 to-transparent flex items-end p-5">
+                        <div>
+                            <div class="font-display text-white text-xl">Men</div>
+                            <div class="text-xs text-clay mt-1">42 items</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="group cursor-pointer relative overflow-hidden rounded-2xl aspect-square card-hover"
+                    onclick="filterProducts('Wear')">
+                    <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&q=80" alt="Wear"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-bark/70 to-transparent flex items-end p-5">
+                        <div>
+                            <div class="font-display text-white text-xl">Women</div>
+                            <div class="text-xs text-clay mt-1">58 items</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="group cursor-pointer relative overflow-hidden rounded-2xl aspect-square card-hover"
+                    onclick="filterProducts('Beauty')">
+                    <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&q=80" alt="Beauty"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-bark/70 to-transparent flex items-end p-5">
+                        <div>
+                            <div class="font-display text-white text-xl">Slides</div>
+                            <div class="text-xs text-clay mt-1">31 items</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="py-10 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+                <div>
+                    <div class="section-line"></div>
+                    <h2 class="font-display text-3xl">Featured Products</h2>
+                </div>
+                <div class="flex flex-wrap gap-2" id="filters">
+                    <button class="filter-btn tag px-4 py-1.5 rounded-full active"
+                        onclick="filterProducts('All')">All</button>
+                    <button class="filter-btn tag px-4 py-1.5 rounded-full"
+                        onclick="filterProducts('Home')">Men</button>
+                    <button class="filter-btn tag px-4 py-1.5 rounded-full"
+                        onclick="filterProducts('Wear')">Women</button>
+                    <button class="filter-btn tag px-4 py-1.5 rounded-full"
+                        onclick="filterProducts('Beauty')">Slides</button>
+                </div>
+            </div>
+
+            <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7">
+                <!-- Products injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER -->
+    <section class="my-16 mx-6 md:mx-12 rounded-3xl overflow-hidden relative"
+        style="background:#2C2218;min-height:260px;">
+        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1200&q=80" alt="Banner"
+            class="absolute inset-0 w-full h-full object-cover opacity-30" />
+        <div class="relative z-10 max-w-7xl mx-auto px-8 py-16 flex flex-wrap items-center justify-between gap-8">
+            <div>
+                <span class="tag text-clay mb-3 block">Limited Time</span>
+                <h2 class="font-display text-4xl md:text-5xl text-cream">Up to 40% Off<br />Selected Pieces</h2>
+                <p class="text-sand opacity-70 mt-3 text-sm">Ends April 15th — no code needed.</p>
+            </div>
+            <a href="#products"
+                class="bg-clay text-bark font-medium px-8 py-4 rounded-full text-sm hover:bg-rust hover:text-white transition-colors">Shop
+                the Sale</a>
+        </div>
+    </section>
+
+
+
+    <!-- NEWSLETTER -->
+    <section class="py-16 px-6 md:px-12">
+        <div class="max-w-xl mx-auto text-center">
+            <div class="section-line mx-auto"></div>
+            <h2 class="font-display text-3xl mb-3">The Inner Circle</h2>
+            <p class="opacity-60 text-sm mb-8">Early access, quiet drops, and stories behind the craft — straight to
+                your inbox.</p>
+            <div class="flex gap-2 max-w-sm mx-auto">
+                <input type="email" placeholder="your@email.com"
+                    class="search-input flex-1 px-5 py-3 rounded-full text-sm font-body" />
+                <button class="btn-primary px-6 py-3 rounded-full text-sm font-medium font-body whitespace-nowrap"
+                    onclick="handleNewsletter()">Join</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
+            <div>
+                <div class="font-display text-2xl font-bold mb-3">SNAPFASHION</div>
+                <p class="text-sm opacity-50 leading-relaxed">Curated goods for the intentional everyday. Crafted with
+                    care, delivered with soul.</p>
+            </div>
+            <div>
+                <div class="tag mb-4 opacity-50">Shop</div>
+                <ul class="space-y-2 text-sm opacity-70">
+                    <li><a href="#" class="hover:opacity-100 transition-opacity">New Arrivals</a></li>
+                    <li><a href="#" class="hover:opacity-100 transition-opacity">Best Sellers</a></li>
+                    <li><a href="#" class="hover:opacity-100 transition-opacity">Sale</a></li>
+
+                </ul>
+            </div>
+            <div>
+                <div class="tag mb-4 opacity-50">Help</div>
+                <ul class="space-y-2 text-sm opacity-70">
+                    <li><a href="#" class="hover:opacity-100 transition-opacity">Shipping</a></li>
+                    <li><a href="#" class="hover:opacity-100 transition-opacity">FAQ</a></li>
+                    <li><a href="#" class="hover:opacity-100 transition-opacity">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="tag mb-4 opacity-50">Follow</div>
+                <div class="flex gap-4">
+                    <a href="#" class="opacity-60 hover:opacity-100 transition-opacity text-sm">Instagram</a>
+                    <a href="#" class="opacity-60 hover:opacity-100 transition-opacity text-sm">Whatsapp</a>
+                </div>
+                <div class="mt-6 text-xs opacity-40">© 2026 SNAPFASHION. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART DRAWER -->
+    <div id="cartDrawer"
+        class="fixed top-0 right-0 h-full w-80 z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col"
+        style="background:var(--cart-bg);">
+        <div class="flex items-center justify-between p-6 border-b border-current border-opacity-10">
+            <h3 class="font-display text-xl">Your Cart</h3>
+            <button onclick="toggleCart()" class="opacity-60 hover:opacity-100">✕</button>
+        </div>
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+        <div class="p-6 border-t border-current border-opacity-10">
+            <div class="flex justify-between mb-4 text-sm"><span>Subtotal</span><span id="cartTotal"
+                    class="font-display font-semibold text-lg">₦0</span></div>
+            <button onclick="checkout()"
+                class="btn-primary w-full py-3.5 rounded-full text-sm font-medium font-body">Checkout →</button>
+        </div>
+    </div>
+    <div id="overlay" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="toggleCart()"></div>
+
+    <!-- TOAST -->
+    <div id="toast"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-sm font-medium font-body shadow-xl flex items-center gap-2"
+        style="background:#2C2218;color:#F7F3EE;">
+        <span id="toastMsg">Added to cart</span>
+    </div>
+
+    <script>
+        // State
+        let darkMode = false;
+        let cart = [];
+        let wishlist = [];
+        let cartOpen = false;
+        let activeFilter = 'All';
+
+        const products = [
+            { id: 1, name: 'Linen Throw Blanket', price: 18500, category: 'Home', badge: 'New', rating: 5, img: 'https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?w=500&q=80' },
+            { id: 2, name: 'Ceramic Mug Set', price: 12000, category: 'Home', badge: null, rating: 5, img: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&q=80' },
+            { id: 3, name: 'Silk Midi Dress', price: 45000, category: 'Wear', badge: 'Sale', rating: 4, img: 'https://images.unsplash.com/photo-1551803091-e20673f15770?w=500&q=80' },
+            { id: 4, name: 'Botanical Face Oil', price: 22000, category: 'Beauty', badge: 'New', rating: 5, img: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=500&q=80' },
+            { id: 5, name: 'Rattan Wall Mirror', price: 38000, category: 'Decor', badge: null, rating: 5, img: 'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=500&q=80' },
+            { id: 6, name: 'Cashmere Tote Bag', price: 32000, category: 'Wear', badge: 'Sale', rating: 4, img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80' },
+            { id: 7, name: 'Soy Candle — Cedar', price: 9500, category: 'Decor', badge: null, rating: 5, img: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80' },
+            { id: 8, name: 'Clay Face Mask', price: 7800, category: 'Beauty', badge: 'New', rating: 4, img: 'https://images.unsplash.com/photo-1570194065650-d99fb4ee0e5d?w=500&q=80' },
+        ];
+
+        function fmt(n) { return '₦' + n.toLocaleString(); }
+
+        function renderProducts(filter) {
+            const grid = document.getElementById('productGrid');
+            const filtered = filter === 'All' ? products : products.filter(p => p.category === filter);
+            grid.innerHTML = '';
+            filtered.forEach((p, i) => {
+                const delay = (i * 0.08).toFixed(2);
+                const stars = '★'.repeat(p.rating) + (p.rating < 5 ? '☆' : '');
+                const badgeHtml = p.badge
+                    ? `<span class="badge ${p.badge === 'New' ? 'badge-new' : 'badge-sale'}">${p.badge}</span>`
+                    : '';
+                const card = document.createElement('div');
+                card.className = 'card-hover relative cursor-pointer';
+                card.style = `animation: fadeUp 0.5s ease ${delay}s forwards; opacity:0;`;
+                card.innerHTML = `
+          <div class="relative product-img-wrap">
+            ${badgeHtml}
+            <img src="${p.img}" alt="${p.name}" loading="lazy"/>
+            <button class="overlay-wishlist absolute top-3 right-3 bg-white/80 dark:bg-bark/80 rounded-full w-8 h-8 flex items-center justify-center text-sm shadow"
+                    onclick="toggleWishlist(event,${p.id})" id="wbtn-${p.id}">♡</button>
+          </div>
+          <div class="mt-3">
+            <div class="rating text-xs mb-0.5">${stars}</div>
+            <div class="text-xs opacity-50 tag mb-1">${p.category}</div>
+            <h3 class="font-display text-base leading-tight mb-1">${p.name}</h3>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-semibold text-sm">${fmt(p.price)}</span>
+              <button onclick="addToCart(${p.id})" class="btn-primary text-xs px-4 py-1.5 rounded-full font-body">Add</button>
+            </div>
+          </div>
+        `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProducts(cat) {
+            activeFilter = cat;
+            document.querySelectorAll('#filters .filter-btn').forEach(b => {
+                b.classList.toggle('active', b.textContent.trim() === cat || (cat === 'All' && b.textContent.trim() === 'All'));
+            });
+            renderProducts(cat);
+        }
+
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
+            const existing = cart.find(x => x.id === id);
+            if (existing) existing.qty++;
+            else cart.push({ ...p, qty: 1 });
+            updateCartUI();
+            showToast(`${p.name} added to cart`);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(x => x.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((a, b) => a + b.qty, 0);
+            const total = cart.reduce((a, b) => a + b.price * b.qty, 0);
+            const cc = document.getElementById('cartCount');
+            cc.textContent = count;
+            cc.classList.toggle('hidden', count === 0);
+            document.getElementById('cartTotal').textContent = fmt(total);
+            const items = document.getElementById('cartItems');
+            items.innerHTML = cart.length ? '' : '<p class="text-sm opacity-50 text-center mt-8">Your cart is empty.</p>';
+            cart.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'flex gap-3 items-start';
+                el.innerHTML = `
+          <img src="${item.img}" class="w-16 h-20 object-cover rounded-lg flex-shrink-0"/>
+          <div class="flex-1 min-w-0">
+            <div class="font-display text-sm leading-tight">${item.name}</div>
+            <div class="text-xs opacity-50 mt-0.5">${fmt(item.price)} × ${item.qty}</div>
+            <div class="text-xs font-semibold mt-1">${fmt(item.price * item.qty)}</div>
+          </div>
+          <button onclick="removeFromCart(${item.id})" class="text-xs opacity-40 hover:opacity-100 mt-1">✕</button>
+        `;
+                items.appendChild(el);
+            });
+        }
+
+        function toggleCart() {
+            cartOpen = !cartOpen;
+            const drawer = document.getElementById('cartDrawer');
+            const ov = document.getElementById('overlay');
+            drawer.style.setProperty('--cart-bg', darkMode ? '#1A1410' : '#F7F3EE');
+            drawer.style.background = darkMode ? '#1A1410' : '#F7F3EE';
+            drawer.classList.toggle('translate-x-full', !cartOpen);
+            ov.classList.toggle('hidden', !cartOpen);
+        }
+
+        function toggleWishlist(e, id) {
+            e.stopPropagation();
+            const btn = document.getElementById('wbtn-' + id);
+            if (wishlist.includes(id)) {
+                wishlist = wishlist.filter(x => x !== id);
+                btn.textContent = '♡';
+                showToast('Removed from wishlist');
+            } else {
+                wishlist.push(id);
+                btn.textContent = '♥';
+                btn.style.color = '#B5522A';
+                showToast('Added to wishlist ♥');
+            }
+            const wc = document.getElementById('wishlistCount');
+            wc.textContent = wishlist.length;
+            wc.classList.toggle('hidden', wishlist.length === 0);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            const tm = document.getElementById('toastMsg');
+            tm.textContent = msg;
+            t.style.background = darkMode ? '#E8DDD0' : '#2C2218';
+            t.style.color = darkMode ? '#1A1410' : '#F7F3EE';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        function toggleDark() {
+            darkMode = !darkMode;
+            document.documentElement.classList.toggle('dark', darkMode);
+            document.documentElement.classList.toggle('light', !darkMode);
+        }
+
+        function checkout() {
+            if (!cart.length) { showToast('Your cart is empty'); return; }
+            showToast('Redirecting to checkout…');
+            setTimeout(() => alert('Checkout coming soon! Total: ' + fmt(cart.reduce((a, b) => a + b.price * b.qty, 0))), 1500);
+        }
+
+        function handleNewsletter() {
+            const email = document.querySelector('input[type=email]').value;
+            if (!email || !email.includes('@')) { showToast('Enter a valid email'); return; }
+            showToast('Welcome to the inner circle ✦');
+            document.querySelector('input[type=email]').value = '';
+        }
+
+        // Search filter
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            if (!q) { renderProducts(activeFilter); return; }
+            const grid = document.getElementById('productGrid');
+            const filtered = products.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+            grid.innerHTML = '';
+            filtered.forEach((p, i) => {
+                const delay = (i * 0.08).toFixed(2);
+                const stars = '★'.repeat(p.rating) + (p.rating < 5 ? '☆' : '');
+                const badgeHtml = p.badge ? `<span class="badge ${p.badge === 'New' ? 'badge-new' : 'badge-sale'}">${p.badge}</span>` : '';
+                const card = document.createElement('div');
+                card.className = 'card-hover relative cursor-pointer';
+                card.style = `animation: fadeUp 0.5s ease ${delay}s forwards; opacity:0;`;
+                card.innerHTML = `
+          <div class="relative product-img-wrap">${badgeHtml}
+            <img src="${p.img}" alt="${p.name}" loading="lazy"/>
+            <button class="overlay-wishlist absolute top-3 right-3 bg-white/80 rounded-full w-8 h-8 flex items-center justify-center text-sm shadow"
+                    onclick="toggleWishlist(event,${p.id})" id="wbtn-${p.id}">♡</button>
+          </div>
+          <div class="mt-3">
+            <div class="rating text-xs mb-0.5">${stars}</div>
+            <div class="text-xs opacity-50 tag mb-1">${p.category}</div>
+            <h3 class="font-display text-base leading-tight mb-1">${p.name}</h3>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-semibold text-sm">${fmt(p.price)}</span>
+              <button onclick="addToCart(${p.id})" class="btn-primary text-xs px-4 py-1.5 rounded-full font-body">Add</button>
+            </div>
+          </div>`;
+                grid.appendChild(card);
+            });
+        });
+
+        // Init
+        renderProducts('All');
+        updateCartUI();
+    </script>
+</body>
+
+</html>
