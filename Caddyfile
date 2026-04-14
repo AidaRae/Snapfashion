@@ -1,0 +1,19 @@
+{
+	auto_https off
+}
+
+:{$PORT} {
+	root * /app/public
+	encode gzip
+
+	php_fastcgi 127.0.0.1:9000 {
+		resolve_root_symlink
+	}
+
+	file_server
+
+	@storage path /storage/*
+	handle @storage {
+		file_server
+	}
+}
