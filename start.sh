@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Running migrations..."
-php artisan migrate --force || echo "⚠️ Migrations failed! (Check your DB credentials in Railway Variables)"
+php artisan migrate --force --seed || echo "⚠️ Migrations failed! (Check your DB credentials in Railway Variables)"
 
 echo "Linking storage..."
 php artisan storage:link || echo "⚠️ Storage link failed or already exists."
