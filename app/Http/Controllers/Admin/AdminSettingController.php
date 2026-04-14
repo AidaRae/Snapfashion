@@ -186,6 +186,15 @@ class AdminSettingController extends Controller
             'google_analytics'   => '',
             'facebook_pixel'     => '',
             'custom_header_code' => '',
+            'banner_enabled'     => '0',
+            'banner_tag'         => '',
+            'banner_title'       => '',
+            'banner_subtitle'    => '',
+            'banner_button_text' => '',
+            'banner_link'        => '',
+            'banner_image'       => '',
+            'banner_bg_color'    => '#2C2218',
+            'banner_text_color'  => '#F7F3EE',
         ];
 
         $dbSettings = Settings::group('general')->pluck('value', 'key')->toArray();
@@ -208,6 +217,7 @@ class AdminSettingController extends Controller
             'site_address' => 'required|string|max:255',
             'logo'         => 'nullable|mimes:jpg,jpeg,png,svg,webp|max:500',
             'favicon'      => 'nullable|mimes:jpg,jpeg,png,svg,webp|max:500',
+            'banner_image' => 'nullable|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         // Random prefix to prevent filename collisions (from reference code)
@@ -228,11 +238,20 @@ class AdminSettingController extends Controller
             Settings::set('favicon', 'storage/logos/' . $favName, 'general');
         }
 
+        if ($request->hasFile('banner_image')) {
+            $file = $request->file('banner_image');
+            $bannerName = $strtxt . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/banners', $bannerName);
+            Settings::set('banner_image', 'banners/' . $bannerName, 'general');
+        }
+
         // ── Text fields — save each one individually ──
         $fields = [
             'site_name', 'site_title', 'description', 'keywords',
             'timezone', 'phone_num', 'site_address', 'contact_instagram',
-            'meta_author', 'google_analytics', 'facebook_pixel', 'custom_header_code'
+            'meta_author', 'google_analytics', 'facebook_pixel', 'custom_header_code',
+            'banner_enabled', 'banner_tag', 'banner_title', 'banner_subtitle',
+            'banner_button_text', 'banner_link', 'banner_bg_color', 'banner_text_color'
         ];
 
         foreach ($fields as $field) {

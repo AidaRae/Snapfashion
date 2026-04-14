@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Log;  
+use Illuminate\Support\Facades\Queue;  
+use Illuminate\Support\Facades\View;    
+use Illuminate\Support\Facades\Schema;      
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,19 +40,28 @@ class AppServiceProvider extends ServiceProvider
                 'google_analytics'   => '',
                 'facebook_pixel'     => '',
                 'custom_header_code' => '',
+                'banner_enabled'     => '0',
+                'banner_tag'         => '',
+                'banner_title'       => '',
+                'banner_subtitle'    => '',
+                'banner_button_text' => '',
+                'banner_link'        => '',
+                'banner_image'       => '',
+                'banner_bg_color'    => '#2C2218',
+                'banner_text_color'  => '#F7F3EE',
             ];
 
-            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+            if (Schema::hasTable('settings')) {
                 $dbSettings = \App\Models\Settings::pluck('value', 'key')->toArray();
                 $settings   = array_merge($defaults, $dbSettings);
             } else {
                 $settings = $defaults;
             }
 
-            \Illuminate\Support\Facades\View::share('settings', $settings);
+            View::share('settings', $settings);
 
             // ── Apply sender identity from admin email settings ──
-            if (\Illuminate\Support\Facades\Schema::hasTable('email_settings')) {
+            if (Schema::hasTable('email_settings')) {
                 $emailSettings = \App\Models\EmailSetting::first();
 
                 if ($emailSettings) {
@@ -62,17 +75,17 @@ class AppServiceProvider extends ServiceProvider
             }
 
             // ── Log failed queue jobs so silent breakages surface ──
-            \Illuminate\Support\Facades\Queue::failing(function (\Illuminate\Queue\Events\JobFailed $event) {
-                \Illuminate\Support\Facades\Log::critical('Queue job failed permanently', [
+            Queue::failing(function (\Illuminate\Queue\Events\JobFailed $event) {
+                Log::critical('Queue job failed permanently', [
                     'connection' => $event->connectionName,
                     'job'        => $event->job->resolveName(),
                     'exception'  => $event->exception->getMessage(),
                 ]);
             });
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Settings boot error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Settings boot error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             // Do not throw during migrations — share defaults so views still render
-            \Illuminate\Support\Facades\View::share('settings', [
+            View::share('settings', [
                 'site_name'          => config('app.name', 'Snapfashion'),
                 'site_title'         => config('app.name', 'Snapfashion'),
                 'site_address'       => '',
@@ -87,6 +100,15 @@ class AppServiceProvider extends ServiceProvider
                 'google_analytics'   => '',
                 'facebook_pixel'     => '',
                 'custom_header_code' => '',
+                'banner_enabled'     => '0',
+                'banner_tag'         => '',
+                'banner_title'       => '',
+                'banner_subtitle'    => '',
+                'banner_button_text' => '',
+                'banner_link'        => '',
+                'banner_image'       => '',
+                'banner_bg_color'    => '#2C2218',
+                'banner_text_color'  => '#F7F3EE',
             ]);
         }
     }

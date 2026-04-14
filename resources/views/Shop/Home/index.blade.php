@@ -246,20 +246,33 @@
 
 
     <!-- BANNER -->
-    <section class="my-16 mx-6 md:mx-12 rounded-3xl overflow-hidden relative" style="background:#2C2218;min-height:260px;">
-        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1200&q=80" alt="Banner"
-            class="absolute inset-0 w-full h-full object-cover opacity-30" />
+    @if(($settings['banner_enabled'] ?? '0') == '1' && !empty($settings['banner_title']))
+    <section class="my-16 mx-6 md:mx-12 rounded-3xl overflow-hidden relative" style="background:{{ $settings['banner_bg_color'] ?? '#2C2218' }};min-height:260px;">
+        @if(!empty($settings['banner_image']))
+            <img src="{{ asset('storage/' . $settings['banner_image']) }}" alt="Sale Banner"
+                class="absolute inset-0 w-full h-full object-cover opacity-30" />
+        @endif
         <div class="relative z-10 max-w-7xl mx-auto px-8 py-16 flex flex-wrap items-center justify-between gap-8">
             <div>
-                <span class="tag text-clay mb-3 block">Limited Time</span>
-                <h2 class="font-display text-4xl md:text-5xl text-cream">Up to 40% Off<br />Selected Pieces</h2>
-                <p class="text-sand opacity-70 mt-3 text-sm">Ends April 15th — no code needed.</p>
+                @if(!empty($settings['banner_tag']))
+                    <span class="tag text-clay mb-3 block">{{ $settings['banner_tag'] }}</span>
+                @endif
+                <h2 class="font-display text-4xl md:text-5xl" style="color:{{ $settings['banner_text_color'] ?? '#F7F3EE' }};">
+                    {!! nl2br(e($settings['banner_title'])) !!}
+                </h2>
+                @if(!empty($settings['banner_subtitle']))
+                    <p class="text-sand opacity-70 mt-3 text-sm">{{ $settings['banner_subtitle'] }}</p>
+                @endif
             </div>
-            <a href="#products"
-                class="bg-clay text-bark font-medium px-8 py-4 rounded-full text-sm hover:bg-rust hover:text-white transition-colors">Shop
-                the Sale</a>
+            @if(!empty($settings['banner_button_text']))
+                <a href="{{ $settings['banner_link'] ?? route('shop.products') }}"
+                    class="bg-clay text-bark font-medium px-8 py-4 rounded-full text-sm hover:bg-rust hover:text-white transition-colors">
+                    {{ $settings['banner_button_text'] }}
+                </a>
+            @endif
         </div>
     </section>
+    @endif
 
     <!-- NEWSLETTER -->
     <section class="py-16 px-6 md:px-12">

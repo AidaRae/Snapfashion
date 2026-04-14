@@ -364,16 +364,20 @@
 
         {{-- Session Alerts --}}
         @if (session('success'))
-            <div class="mb-5 flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-xl px-4 py-3 text-sm">
+            <div
+                class="mb-5 flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-xl px-4 py-3 text-sm">
                 <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
                 </svg>
                 <span>{{ session('success') }}</span>
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="mb-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-xl px-4 py-3 text-sm">
+            <div
+                class="mb-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-xl px-4 py-3 text-sm">
                 <p class="font-semibold mb-1">Please fix the following errors:</p>
                 <ul class="list-disc list-inside space-y-0.5">
                     @foreach ($errors->all() as $error)
@@ -430,13 +434,21 @@
                     </svg>
                     Shipping
                 </button>
+                <button class="settings-tab-btn" onclick="switchStab(this,'stab-banner')">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                        <path d="M19 4H5a2 2 0 00-2 2v2a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zM5 10v8a2 2 0 002 2h10a2 2 0 002-2v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Banner
+                </button>
 
             </div>
 
             {{-- ══════════════════════════════════════════
              FORM — all tabs share one form / one submit
         ══════════════════════════════════════════ --}}
-            <form action="{{ route('admin.settings.website.update') }}" method="POST" enctype="multipart/form-data" novalidate>
+            <form action="{{ route('admin.settings.website.update') }}" method="POST" enctype="multipart/form-data"
+                novalidate>
                 @method('PUT')
                 @csrf
 
@@ -847,6 +859,174 @@
                     </div>
                 </div>
 
+                {{-- ── BANNER TAB ── --}}
+                <div id="stab-banner" class="stab-content hidden px-4 sm:px-6 lg:px-8 py-7">
+
+                    <div class="section-divider">
+                        <span class="section-divider-label">Homepage Sales Banner</span>
+                        <div class="section-divider-line"></div>
+                    </div>
+
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        Configure the promotional banner that appears on your homepage between the products section and newsletter. Great for sales, collections, and seasonal offers.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+
+                        {{-- Enable Banner --}}
+                        <div class="sm:col-span-2">
+                            <label class="flex items-center gap-3 cursor-pointer select-none">
+                                <input type="hidden" name="banner_enabled" value="0">
+                                <input type="checkbox" name="banner_enabled" value="1"
+                                    {{ ($settings['banner_enabled'] ?? '0') == '1' ? 'checked' : '' }}
+                                    class="w-5 h-5 rounded border-gray-300 dark:border-neutral-600 text-blue-500 focus:ring-blue-500 cursor-pointer">
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">Enable Sales Banner</span>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">When enabled, the banner section appears on the homepage.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        {{-- Banner Tag --}}
+                        <div>
+                            <label class="form-label">Tag Line</label>
+                            <div class="input-icon-wrap">
+                                <span class="icon">
+                                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <line x1="7" y1="7" x2="7.01" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <input type="text" name="banner_tag" value="{{ $settings['banner_tag'] ?? '' }}"
+                                    placeholder="e.g. Limited Time" class="form-input" maxlength="50" />
+                            </div>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1.5 ml-1">Small text above the title (optional).</p>
+                        </div>
+
+                        {{-- Banner Title --}}
+                        <div>
+                            <label class="form-label">Banner Title</label>
+                            <div class="input-icon-wrap">
+                                <span class="icon">
+                                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                        <path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <input type="text" name="banner_title" value="{{ $settings['banner_title'] ?? '' }}"
+                                    placeholder="e.g. Up to 40% Off Selected Pieces" class="form-input" maxlength="120" />
+                            </div>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1.5 ml-1">Main heading. Use a new line for line breaks.</p>
+                        </div>
+
+                        {{-- Banner Subtitle --}}
+                        <div class="sm:col-span-2">
+                            <label class="form-label">Subtitle</label>
+                            <div class="input-icon-wrap">
+                                <span class="icon">
+                                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <input type="text" name="banner_subtitle" value="{{ $settings['banner_subtitle'] ?? '' }}"
+                                    placeholder="e.g. Ends April 15th — no code needed." class="form-input" maxlength="200" />
+                            </div>
+                        </div>
+
+                        {{-- Button Text --}}
+                        <div>
+                            <label class="form-label">Button Text</label>
+                            <div class="input-icon-wrap">
+                                <span class="icon">
+                                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                        <rect x="3" y="8" width="18" height="8" rx="3" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </span>
+                                <input type="text" name="banner_button_text" value="{{ $settings['banner_button_text'] ?? '' }}"
+                                    placeholder="e.g. Shop the Sale" class="form-input" maxlength="40" />
+                            </div>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1.5 ml-1">Leave empty to hide the button.</p>
+                        </div>
+
+                        {{-- Button Link --}}
+                        <div>
+                            <label class="form-label">Button Link</label>
+                            <div class="input-icon-wrap">
+                                <span class="icon">
+                                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                                <input type="text" name="banner_link" value="{{ $settings['banner_link'] ?? '' }}"
+                                    placeholder="/shop or https://..." class="form-input" />
+                            </div>
+                        </div>
+
+                        {{-- Banner Image --}}
+                        <div class="sm:col-span-2">
+                            <label class="form-label">
+                                Background Image
+                                <span class="normal-case font-normal text-gray-400 dark:text-gray-600 ml-1">— recommended 1200×400px</span>
+                            </label>
+                            <div class="file-drop" id="bannerDrop">
+                                <input type="file" name="banner_image" accept="image/*"
+                                    onchange="handleFilePick(this,'bannerPreviewWrap','bannerPreviewImg','bannerFileName')">
+                                <div class="file-drop-icon">
+                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" class="text-brand">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">Click to upload banner image</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500">JPG, PNG, WEBP · Max 2MB</p>
+                            </div>
+                            <div id="bannerPreviewWrap" class="preview-wrap mt-2" style="display:none;">
+                                <img id="bannerPreviewImg" src="" alt="Banner preview" />
+                                <div class="min-w-0">
+                                    <p id="bannerFileName" class="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate"></p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500">Selected</p>
+                                </div>
+                                <button type="button" onclick="clearFile('banner_image','bannerPreviewWrap')" class="ml-auto text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
+                                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                </button>
+                            </div>
+                            @if(!empty($settings['banner_image']))
+                                <div class="flex items-center gap-2 mt-2 text-xs text-gray-400 dark:text-gray-500">
+                                    <img src="{{ asset('storage/' . $settings['banner_image']) }}" alt="Current banner"
+                                        class="w-16 h-8 rounded object-cover border border-gray-200 dark:border-neutral-700" />
+                                    <span>Current banner image</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Background Color --}}
+                        <div>
+                            <label class="form-label">Background Color (fallback)</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="banner_bg_color" value="{{ $settings['banner_bg_color'] ?? '#2C2218' }}"
+                                    class="w-10 h-10 rounded-lg border border-gray-200 dark:border-neutral-700 cursor-pointer p-0.5" id="bannerBgColorPicker">
+                                <input type="text" value="{{ $settings['banner_bg_color'] ?? '#2C2218' }}"
+                                    class="form-input flex-1 font-mono text-xs uppercase" id="bannerBgColorText" maxlength="7"
+                                    oninput="document.getElementById('bannerBgColorPicker').value=this.value">
+                            </div>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1.5 ml-1">Used as the banner background. Image overlays this color.</p>
+                        </div>
+
+                        {{-- Text Color --}}
+                        <div>
+                            <label class="form-label">Title Text Color</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="banner_text_color" value="{{ $settings['banner_text_color'] ?? '#F7F3EE' }}"
+                                    class="w-10 h-10 rounded-lg border border-gray-200 dark:border-neutral-700 cursor-pointer p-0.5" id="bannerTextColorPicker">
+                                <input type="text" value="{{ $settings['banner_text_color'] ?? '#F7F3EE' }}"
+                                    class="form-input flex-1 font-mono text-xs uppercase" id="bannerTextColorText" maxlength="7"
+                                    oninput="document.getElementById('bannerTextColorPicker').value=this.value">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
                 {{-- ── SHIPPING TAB ── --}}
                 <div id="stab-shipping" class="stab-content hidden px-4 sm:px-6 lg:px-8 py-7">
 
@@ -947,7 +1127,9 @@
                                         $currentOrigin = old('origin_state', $shipping['origin_state'] ?? 'Lagos');
                                     @endphp
                                     @foreach ($nigeriaStates as $state)
-                                        <option value="{{ $state }}" class="bg-white text-gray-900 dark:bg-neutral-800 dark:text-gray-100" @selected($currentOrigin === $state)>
+                                        <option value="{{ $state }}"
+                                            class="bg-white text-gray-900 dark:bg-neutral-800 dark:text-gray-100"
+                                            @selected($currentOrigin === $state)>
                                             {{ $state }}</option>
                                     @endforeach
                                 </select>
@@ -971,42 +1153,63 @@
                         <div class="section-divider-line"></div>
                     </div>
 
-                    <div class="mb-5 flex items-center justify-between bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm">
+                    <div
+                        class="mb-5 flex items-center justify-between bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm">
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Enable Shipping Processing</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Turn off to completely disable shipping options globally at checkout.</p>
+                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Enable Shipping Processing
+                            </h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Turn off to completely disable
+                                shipping options globally at checkout.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="is_enabled" value="1" class="sr-only peer" {{ ($shipping['is_enabled'] ?? true) ? 'checked' : '' }}>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500"></div>
+                            <input type="checkbox" name="is_enabled" value="1" class="sr-only peer"
+                                {{ $shipping['is_enabled'] ?? true ? 'checked' : '' }}>
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500">
+                            </div>
                         </label>
                     </div>
 
-                    <div class="mb-5 flex flex-col sm:flex-row items-center justify-between bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm">
+                    <div
+                        class="mb-5 flex flex-col sm:flex-row items-center justify-between bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm">
                         <div class="w-full sm:w-auto mb-3 sm:mb-0">
-                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Enable Flat Rate Shipping</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">If enabled, standard shipping zones below will be ignored and all standard shipping will cost this flat amount.</p>
+                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Enable Flat Rate Shipping
+                            </h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">If enabled, standard shipping zones
+                                below will be ignored and all standard shipping will cost this flat amount.</p>
                         </div>
                         <div class="flex items-center gap-4 w-full sm:w-auto">
                             <div class="flex flex-col">
-                                <label class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Flat Rate (₦)</label>
-                                <input type="number" name="flat_rate_price" value="{{ old('flat_rate_price', $shipping['flat_rate_price'] ?? 0) }}" class="form-input w-24 text-sm px-2 py-1" />
+                                <label class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Flat
+                                    Rate (₦)</label>
+                                <input type="number" name="flat_rate_price"
+                                    value="{{ old('flat_rate_price', $shipping['flat_rate_price'] ?? 0) }}"
+                                    class="form-input w-24 text-sm px-2 py-1" />
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer mt-4">
-                                <input type="checkbox" name="is_flat_rate_enabled" value="1" class="sr-only peer" {{ ($shipping['is_flat_rate_enabled'] ?? false) ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500"></div>
+                                <input type="checkbox" name="is_flat_rate_enabled" value="1" class="sr-only peer"
+                                    {{ $shipping['is_flat_rate_enabled'] ?? false ? 'checked' : '' }}>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500">
+                                </div>
                             </label>
                         </div>
                     </div>
 
-                    <div class="mb-5 flex items-center justify-between bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm">
+                    <div
+                        class="mb-5 flex items-center justify-between bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm">
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Offer Global Free Shipping</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">If enabled, standard zone rates and flat rates will be bypassed, and shipping will be unconditionally free for all orders.</p>
+                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Offer Global Free Shipping
+                            </h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">If enabled, standard zone rates and
+                                flat rates will be bypassed, and shipping will be unconditionally free for all orders.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="is_free_shipping_enabled" value="1" class="sr-only peer" {{ ($shipping['is_free_shipping_enabled'] ?? false) ? 'checked' : '' }}>
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500"></div>
+                            <input type="checkbox" name="is_free_shipping_enabled" value="1" class="sr-only peer"
+                                {{ $shipping['is_free_shipping_enabled'] ?? false ? 'checked' : '' }}>
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500">
+                            </div>
                         </label>
                     </div>
 
@@ -1296,7 +1499,8 @@
                     stab_contact: ['phone_num'],
                     stab_shipping: ['free_shipping_threshold', 'default_delivery_estimate', 'origin_state',
                         'remote_area_surcharge', 'bulky_surcharge', 'bulky_weight_kg'
-                    ]
+                    ],
+                    stab_banner: ['banner_title', 'banner_tag', 'banner_subtitle', 'banner_button_text', 'banner_link', 'banner_image']
                 };
                 @if ($errors->any())
                     const errKeys = @json($errors->keys());
@@ -1383,6 +1587,19 @@
                     }
                 });
             });
+
+            // ── Banner tab: color picker sync ──
+            const bgPicker = document.getElementById('bannerBgColorPicker');
+            const bgText = document.getElementById('bannerBgColorText');
+            const txtPicker = document.getElementById('bannerTextColorPicker');
+            const txtText = document.getElementById('bannerTextColorText');
+
+            if (bgPicker) {
+                bgPicker.addEventListener('input', function() { bgText.value = this.value; });
+            }
+            if (txtPicker) {
+                txtPicker.addEventListener('input', function() { txtText.value = this.value; });
+            }
         </script>
     @endpush
 @endsection
