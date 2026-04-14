@@ -13,13 +13,12 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::firstOrCreate(
+        Admin::updateOrCreate(
             ['email' => 'admin@snapfashion.com'],
             [
                 'first_name' => 'Admin',
                 'last_name' => 'User',
-                'email' => 'admin@snapfashion.com',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin123'),
             ]
         );
     }
