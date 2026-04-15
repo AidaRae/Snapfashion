@@ -7,6 +7,7 @@ use App\Models\EmailSetting;
 use App\Models\PaymentSetting;
 use App\Models\Settings;
 use App\Models\ShippingSetting;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -170,35 +171,11 @@ class AdminSettingController extends Controller
      */
     public function webSettings()
     {
-        // Merge DB values with sensible defaults — ensures form is always populated
-        $defaults = [
-            'site_name'          => config('app.name', 'Snapfashion'),
-            'site_title'         => config('app.name', 'Snapfashion'),
-            'site_address'       => config('app.url', ''),
-            'description'        => '',
-            'keywords'           => '',
-            'timezone'           => config('app.timezone', 'UTC'),
-            'logo'               => '',
-            'favicon'            => '',
-            'phone_num'          => '',
-            'contact_instagram'  => '',
-            'meta_author'        => '',
-            'google_analytics'   => '',
-            'facebook_pixel'     => '',
-            'custom_header_code' => '',
-            'banner_enabled'     => '0',
-            'banner_tag'         => '',
-            'banner_title'       => '',
-            'banner_subtitle'    => '',
-            'banner_button_text' => '',
-            'banner_link'        => '',
-            'banner_image'       => '',
-            'banner_bg_color'    => '#2C2218',
-            'banner_text_color'  => '#F7F3EE',
-        ];
-
-        $dbSettings = Settings::group('general')->pluck('value', 'key')->toArray();
-        $settings   = array_merge($defaults, $dbSettings);
+        $settings = SiteSetting::firstOrCreate([], [
+            'site_name' => config('app.name', 'Snapfashion'),
+            'site_title' => config('app.name', 'Snapfashion'),
+            'site_address' => config('app.url', ''),
+        ]);
 
         $shipping  = ShippingSetting::firstOrCreate([], [])->toArray();
         $timezones = timezone_identifiers_list();
@@ -220,55 +197,53 @@ class AdminSettingController extends Controller
             'banner_image' => 'nullable|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // Random prefix to prevent filename collisions (from reference code)
+        $settings = SiteSetting::firstOrCreate([], []);
+
+        // Random prefix to prevent filename collisions
         $strtxt = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'), 0, 6);
 
-        // ── File uploads — handle BEFORE text fields ──
+        // ── File uploads ──
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $logoName = $strtxt . '_' . $file->getClientOriginalName();
             $file->storeAs('public/logos', $logoName);
-            Settings::set('logo', 'storage/logos/' . $logoName, 'general');
+            $settings->logo = 'storage/logos/' . $logoName;
         }
 
         if ($request->hasFile('favicon')) {
             $file = $request->file('favicon');
             $favName = $strtxt . '_' . $file->getClientOriginalName();
             $file->storeAs('public/logos', $favName);
-            Settings::set('favicon', 'storage/logos/' . $favName, 'general');
+            $settings->favicon = 'storage/logos/' . $favName;
         }
 
         if ($request->hasFile('banner_image')) {
             $file = $request->file('banner_image');
             $bannerName = $strtxt . '_' . $file->getClientOriginalName();
             $file->storeAs('public/banners', $bannerName);
-            Settings::set('banner_image', 'banners/' . $bannerName, 'general');
+            $settings->banner_image = 'banners/' . $bannerName;
         }
 
-        // ── Text fields — save each one individually ──
-        $fields = [
-            'site_name', 'site_title', 'description', 'keywords',
-            'timezone', 'phone_num', 'site_address', 'contact_instagram',
+        // ── Text fields ──
+        $settings->fill($request->only([
+            'site_name', 'site_title', 'site_address', 'description', 'keywords',
+            'timezone', 'phone_num', 'contact_instagram',
             'meta_author', 'google_analytics', 'facebook_pixel', 'custom_header_code',
-            'banner_enabled', 'banner_tag', 'banner_title', 'banner_subtitle',
-            'banner_button_text', 'banner_link', 'banner_bg_color', 'banner_text_color'
-        ];
+            'banner_tag', 'banner_title', 'banner_subtitle',
+            'banner_button_text', 'banner_link', 'banner_bg_color', 'banner_text_color',
+        ]));
 
-        foreach ($fields as $field) {
-            $val = $request->input($field);
-            // Save null for empty values so ?? fallback works in Blade templates
-            Settings::set($field, (is_null($val) || $val === '') ? null : $val, 'general');
-        }
+        $settings->banner_enabled = $request->boolean('banner_enabled');
+        $settings->save();
 
         // ── Shipping fields (stored in 'shipping_settings' table) ──
         $shippingSettings = ShippingSetting::firstOrCreate([], []);
-        // Map checkbox correctly
         $request->merge([
             'is_enabled' => $request->has('is_enabled'),
             'is_flat_rate_enabled' => $request->has('is_flat_rate_enabled'),
             'is_free_shipping_enabled' => $request->has('is_free_shipping_enabled'),
         ]);
-        
+
         $shippingSettings->fill($request->only([
             'is_enabled', 'is_flat_rate_enabled', 'is_free_shipping_enabled', 'flat_rate_price', 'free_shipping_threshold', 'default_delivery_estimate', 'origin_state',
             'remote_area_surcharge', 'bulky_surcharge', 'bulky_weight_kg', 'holiday_notice'

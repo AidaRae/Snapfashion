@@ -57,7 +57,7 @@
                     </p>
                     <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate"
                         style="font-family:'Syne',sans-serif;">
-                        ${{ number_format($totalRevenue, 2) }}
+                        ₦{{ number_format($totalRevenue, 2) }}
                     </h3>
                 </div>
             </div>
@@ -108,7 +108,7 @@
                     </p>
                     <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate"
                         style="font-family:'Syne',sans-serif;">
-                        ${{ number_format($averageOrderValue, 2) }}
+                        ₦{{ number_format($averageOrderValue, 2) }}
                     </h3>
                 </div>
             </div>
@@ -169,7 +169,7 @@
                                 : ($order->guest_name ?? 'Guest') }}
                         </td>
                         <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">
-                            ${{ number_format($order->total_amount, 2) }}
+                            ₦{{ number_format($order->total_amount, 2) }}
                         </td>
                         <td class="px-6 py-4 text-gray-500">
                             {{ $order->created_at->format('M d, Y h:i A') }}
@@ -210,7 +210,7 @@
                         #{{ $order->tracking_code ?? $order->id }}
                     </span>
                     <span class="text-sm font-bold text-gray-900 dark:text-white">
-                        ${{ number_format($order->total_amount, 2) }}
+                        ₦{{ number_format($order->total_amount, 2) }}
                     </span>
                 </div>
 
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         data: {
             labels,
             datasets: [{
-                label: 'Revenue ($)',
+                label: 'Revenue (₦)',
                 data,
                 backgroundColor: gradient,
                 borderColor: '#3b82f6',
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     bodyFont:  { family: "'DM Sans', sans-serif", size: 13, weight: 'bold' },
                     displayColors: false,
                     callbacks: {
-                        label: ctx => '$' + ctx.parsed.y.toLocaleString(),
+                        label: ctx => '₦' + ctx.parsed.y.toLocaleString(),
                     },
                 },
             },
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     grid: { color: 'rgba(156,163,175,0.1)', drawBorder: false },
                     ticks: {
                         font: { family: "'DM Sans', sans-serif", size: 11 },
-                        callback: v => '$' + v.toLocaleString(),
+                        callback: v => '₦' + v.toLocaleString(),
                         maxTicksLimit: 6,
                     },
                 },

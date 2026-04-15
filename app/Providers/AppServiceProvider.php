@@ -6,7 +6,9 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;  
 use Illuminate\Support\Facades\Queue;  
 use Illuminate\Support\Facades\View;    
-use Illuminate\Support\Facades\Schema;      
+use Illuminate\Support\Facades\Schema;  
+use Illuminate\Support\Facades\Config;  
+    
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -51,9 +53,11 @@ class AppServiceProvider extends ServiceProvider
                 'banner_text_color'  => '#F7F3EE',
             ];
 
-            if (Schema::hasTable('settings')) {
-                $dbSettings = \App\Models\Settings::pluck('value', 'key')->toArray();
-                $settings   = array_merge($defaults, $dbSettings);
+            if (Schema::hasTable('site_settings')) {
+                $settings = \App\Models\SiteSetting::first();
+                if (!$settings) {
+                    $settings = \App\Models\SiteSetting::create($defaults);
+                }
             } else {
                 $settings = $defaults;
             }

@@ -190,6 +190,11 @@
     </div>
 
     <style>
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(24px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
         /* Wishlist table styles */
         .wishlist-table-wrap {
             background: rgba(247, 243, 238, 0.5);
