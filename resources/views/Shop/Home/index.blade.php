@@ -7,13 +7,26 @@
         <div id="heroSlider"
             class="absolute inset-0 w-full h-full flex transition-transform duration-700 ease-[cubic-bezier(0.87,0,0.13,1)]">
             @php
-                $slides = [
-                    'images/slide/D5CC2195-BCB4-414C-B831-76A85F24519C.jpg',
-                    'images/slide/DC510544-133C-4451-B407-B3ED15BCD489.jpg',
-                    'images/slide/DE0088DF-68C0-4DFF-8913-23FE13BC1939.jpg',
-                    'images/slide/F0F3044D-4617-46E2-A339-BE86CEF034CA.jpg',
-                    'images/slide/IMG_7636.jpg',
-                ];
+                $slides = [];
+                $settings = \App\Models\SiteSetting::first();
+                if ($settings) {
+                    for ($i = 1; $i <= 5; $i++) {
+                        if (!empty($settings['home_slide_' . $i])) {
+                            $slides[] = 'storage/' . $settings['home_slide_' . $i];
+                        }
+                    }
+                }
+                
+                // Fallback to defaults if no slides uploaded
+                if (empty($slides)) {
+                    $slides = [
+                        'images/slide/D5CC2195-BCB4-414C-B831-76A85F24519C.jpg',
+                        'images/slide/DC510544-133C-4451-B407-B3ED15BCD489.jpg',
+                        'images/slide/DE0088DF-68C0-4DFF-8913-23FE13BC1939.jpg',
+                        'images/slide/F0F3044D-4617-46E2-A339-BE86CEF034CA.jpg',
+                        'images/slide/IMG_7636.jpg',
+                    ];
+                }
             @endphp
 
             @foreach ($slides as $index => $slide)

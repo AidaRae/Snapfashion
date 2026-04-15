@@ -224,6 +224,19 @@ class AdminSettingController extends Controller
             $settings->banner_image = 'banners/' . $bannerName;
         }
 
+        // ── Home Slides ──
+        for ($i = 1; $i <= 5; $i++) {
+            $field = 'home_slide_' . $i;
+            if ($request->hasFile($field)) {
+                $file = $request->file($field);
+                $slideName = $strtxt . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/slides', $slideName);
+                $settings->{$field} = 'slides/' . $slideName;
+            } elseif ($request->boolean('remove_' . $field)) {
+                $settings->{$field} = null;
+            }
+        }
+
         // ── Text fields ──
         $settings->fill($request->only([
             'site_name', 'site_title', 'site_address', 'description', 'keywords',

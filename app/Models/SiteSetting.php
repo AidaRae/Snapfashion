@@ -21,6 +21,7 @@ class SiteSetting extends Model implements ArrayAccess
         'banner_enabled', 'banner_tag', 'banner_title', 'banner_subtitle',
         'banner_button_text', 'banner_link', 'banner_image',
         'banner_bg_color', 'banner_text_color',
+        'home_slide_1', 'home_slide_2', 'home_slide_3', 'home_slide_4', 'home_slide_5',
     ];
 
     protected $casts = [

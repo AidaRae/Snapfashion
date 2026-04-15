@@ -441,6 +441,13 @@
                     </svg>
                     Banner
                 </button>
+                <button class="settings-tab-btn" onclick="switchStab(this,'stab-homepage')">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Homepage
+                </button>
 
             </div>
 
@@ -856,6 +863,61 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                {{-- ── HOMEPAGE TAB ── --}}
+                <div id="stab-homepage" class="stab-content hidden px-4 sm:px-6 lg:px-8 py-7">
+                    <div class="section-divider">
+                        <span class="section-divider-label">Homepage Sliders</span>
+                        <div class="section-divider-line"></div>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        Upload up to 5 images for the main auto-scrolling hero slider on your homepage. The slides will display in the exact order you provide them. We recommend 1920x1080 (or similar aspect ratio) for standard fullscreen display.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                        @for($i = 1; $i <= 5; $i++)
+                            <div class="card p-4 border border-gray-100 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 rounded-2xl relative">
+                                <label class="form-label space-x-2">
+                                    <span>Slide {{ $i }}</span>
+                                </label>
+
+                                <div class="file-drop" id="slide{{ $i }}Drop">
+                                    <input type="file" name="home_slide_{{ $i }}" accept="image/*"
+                                        onchange="handleFilePick(this,'slide{{ $i }}PreviewWrap','slide{{ $i }}PreviewImg','slide{{ $i }}FileName')">
+                                    <div class="file-drop-icon">
+                                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" class="text-brand">
+                                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 mt-2">Click to upload Slide {{ $i }}</p>
+                                </div>
+
+                                <div id="slide{{ $i }}PreviewWrap" class="preview-wrap mt-2" style="display:none;">
+                                    <img id="slide{{ $i }}PreviewImg" src="" alt="Slide {{ $i }} preview" class="w-12 h-12 object-cover rounded" />
+                                    <div class="min-w-0">
+                                        <p id="slide{{ $i }}FileName" class="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate"></p>
+                                        <p class="text-xs text-gray-400 dark:text-gray-500">Selected</p>
+                                    </div>
+                                    <button type="button" onclick="clearFile('home_slide_{{ $i }}','slide{{ $i }}PreviewWrap')" class="ml-auto text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
+                                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                    </button>
+                                </div>
+
+                                @if (!empty($settings['home_slide_' . $i]))
+                                    <div class="flex items-center gap-3 mt-3 p-2 bg-gray-50 dark:bg-neutral-800 rounded-lg border border-gray-100 dark:border-neutral-700">
+                                        <img src="{{ asset('storage/' . $settings['home_slide_' . $i]) }}" alt="Current Slide {{ $i }}"
+                                            class="w-12 h-12 rounded object-cover" />
+                                        <span class="text-xs text-gray-500 font-medium">Currently Active</span>
+                                        <label class="ml-auto flex items-center gap-2 cursor-pointer text-xs text-red-500 hover:text-red-600 font-medium px-2 py-1 bg-red-50 dark:bg-red-500/10 rounded transition-colors">
+                                            <input type="checkbox" name="remove_home_slide_{{ $i }}" value="1" class="w-3.5 h-3.5 rounded text-red-500 border-red-300 focus:ring-red-500 bg-white">
+                                            Remove
+                                        </label>
+                                    </div>
+                                @endif
+                            </div>
+                        @endfor
                     </div>
                 </div>
 
