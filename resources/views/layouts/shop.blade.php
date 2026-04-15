@@ -476,7 +476,7 @@
         let wishlist = {!! json_encode($wishlistArray) !!};
         let cartOpen = false;
         let activeFilter = 'All';
-        const csrfToken = '{{ csrf_token() }}';
+        const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
         function fmt(n) {
             return '₦' + Number(n).toLocaleString();
@@ -497,7 +497,7 @@
                     credentials: 'same-origin',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': csrfToken,
+                        'X-CSRF-TOKEN': getCsrfToken(),
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
@@ -529,7 +529,7 @@
                     credentials: 'same-origin',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': csrfToken,
+                        'X-CSRF-TOKEN': getCsrfToken(),
                         'Accept': 'application/json'
                     }
                 });
@@ -639,7 +639,7 @@
                     credentials: 'same-origin',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': csrfToken,
+                        'X-CSRF-TOKEN': getCsrfToken(),
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     }
