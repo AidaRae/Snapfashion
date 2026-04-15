@@ -73,47 +73,45 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                {{-- Size Selector --}}
-                @if(!empty($product->sizes) && is_array($product->sizes))
-                <div>
-                    <label class="block text-xs font-display font-bold uppercase tracking-[0.2em] text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">Size</label>
-                    <div class="relative">
-                        <select id="sizeSelector" class="w-full appearance-none bg-transparent border border-gray-300 dark:border-neutral-600 text-gray-900 dark:text-gray-200 py-3 pl-4 pr-10 text-base sm:text-sm font-display tracking-wider uppercase focus:outline-none focus:border-bark dark:focus:border-cream rounded-none">
-                            <option value="" class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-200">Option</option>
-                            @foreach($product->sizes as $size)
-                                <option value="{{ strtolower($size) }}" class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-200">{{ $size }}</option>
-                            @endforeach
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
-                    </div>
+            {{-- Size Selector --}}
+            @if(!empty($product->sizes) && is_array($product->sizes))
+            <div class="mb-5">
+                <label class="block text-xs font-display font-bold uppercase tracking-[0.2em] text-gray-700 dark:text-gray-300 mb-3">Size <span id="sizeTarget" class="text-gray-400 ml-1 font-normal opacity-80"></span></label>
+                <div class="flex flex-wrap gap-2.5">
+                    @foreach($product->sizes as $size)
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="size" value="{{ strtolower($size) }}" class="peer sr-only" onchange="document.getElementById('sizeTarget').innerText = '- ' + this.value.toUpperCase(); document.getElementById('sizeSelector').value = this.value;">
+                            <div class="min-w-[3rem] px-3 py-2 border border-gray-300 dark:border-neutral-600 text-center text-sm font-display font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300 bg-transparent transition-all peer-checked:bg-bark peer-checked:border-bark peer-checked:text-cream dark:peer-checked:bg-cream dark:peer-checked:border-cream dark:peer-checked:text-bark hover:border-gray-400 dark:hover:border-neutral-500 flex items-center justify-center">
+                                {{ $size }}
+                            </div>
+                        </label>
+                    @endforeach
                 </div>
-                @endif
-
-                {{-- Color Selector --}}
-                @if(!empty($product->colors) && is_array($product->colors))
-                <div>
-                    <label class="block text-xs font-display font-bold uppercase tracking-[0.2em] text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">Color</label>
-                    <div class="relative">
-                        <select id="colorSelector" class="w-full appearance-none bg-transparent border border-gray-300 dark:border-neutral-600 text-gray-900 dark:text-gray-200 py-3 pl-4 pr-10 text-base sm:text-sm font-display tracking-wider uppercase focus:outline-none focus:border-bark dark:focus:border-cream rounded-none">
-                            <option value="" class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-200">Option</option>
-                            @foreach($product->colors as $color)
-                                <option value="{{ strtolower($color) }}" class="bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-200">{{ $color }}</option>
-                            @endforeach
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
-                    </div>
-                </div>
-                @endif
+                <input type="hidden" id="sizeSelector" value="">
             </div>
+            @endif
+
+            {{-- Color Selector --}}
+            @if(!empty($product->colors) && is_array($product->colors))
+            <div class="mb-6">
+                <label class="block text-xs font-display font-bold uppercase tracking-[0.2em] text-gray-700 dark:text-gray-300 mb-3">Color <span id="colorTarget" class="text-gray-400 ml-1 font-normal opacity-80"></span></label>
+                <div class="flex flex-wrap gap-2.5">
+                    @foreach($product->colors as $color)
+                        <label class="cursor-pointer group relative">
+                            <input type="radio" name="color" value="{{ strtolower($color) }}" class="peer sr-only" onchange="document.getElementById('colorTarget').innerText = '- ' + this.value.toUpperCase(); document.getElementById('colorSelector').value = this.value;">
+                            <div class="min-w-[3rem] px-3 py-2 border border-gray-300 dark:border-neutral-600 text-center text-sm font-display font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300 bg-transparent transition-all peer-checked:bg-bark peer-checked:border-bark peer-checked:text-cream dark:peer-checked:bg-cream dark:peer-checked:border-cream dark:peer-checked:text-bark hover:border-gray-400 dark:hover:border-neutral-500 flex items-center justify-center">
+                                {{ $color }}
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+                <input type="hidden" id="colorSelector" value="">
+            </div>
+            @endif
             {{-- Quantity + Add to Cart --}}
             @if($product->stock > 0 && $product->is_purchasable)
                 <div class="mb-6">
-                    <div class="flex flex-row items-stretch gap-3">
+                    <div class="flex items-stretch gap-2.5 sm:gap-3">
                         {{-- Qty Selector --}}
                         <div class="flex items-center border border-gray-300 dark:border-neutral-600 flex-shrink-0">
                             <button type="button" class="px-3 sm:px-4 py-3.5 text-lg font-light opacity-60 hover:opacity-100 transition-opacity leading-none" onclick="changeQty(-1)">−</button>
@@ -122,9 +120,9 @@
                         </div>
 
                         {{-- Add to Cart Button --}}
-                        <button type="button" onclick="handleAddCart(this)" data-id="{{ $product->id }}" class="flex-1 flex items-center justify-center gap-2 bg-bark dark:bg-neutral-800 text-cream font-display text-xs font-bold tracking-[0.2em] uppercase py-3.5 px-3 sm:px-6 hover:opacity-80 transition-opacity">
-                            Add To Cart
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                        <button type="button" onclick="handleAddCart(this)" data-id="{{ $product->id }}" class="flex-1 flex items-center justify-center gap-2 bg-bark dark:bg-neutral-800 text-cream font-display text-xs font-bold tracking-[0.1em] sm:tracking-[0.2em] uppercase py-3.5 px-3 hover:opacity-80 transition-opacity">
+                            <span class="whitespace-nowrap">Add To Cart</span>
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
                         </button>
                     </div>
                 </div>
